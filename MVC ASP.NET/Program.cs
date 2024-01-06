@@ -1,10 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using MVC_ASP.NET.Data;
+using MVC_ASP.NET.Interfaces;
+using MVC_ASP.NET.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IClubRepository, ClubRepository>();
+builder.Services.AddScoped<IRaceRepository, RaceRepository>();
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
