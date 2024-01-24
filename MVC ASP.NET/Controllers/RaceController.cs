@@ -1,18 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MVC_ASP.NET.Data;
 using MVC_ASP.NET.Interfaces;
 using MVC_ASP.NET.Models;
+using MVC_ASP.NET.ViewModel;
 
 namespace MVC_ASP.NET.Controllers
 {
     public class RaceController : Controller
     {
 		private readonly IRaceRepository _raceRepository;
+        private readonly IPhotoService _photoService;
 
-		public RaceController(IRaceRepository raceRepository) {
-			this._raceRepository = raceRepository;
-		}
+        public RaceController(IRaceRepository raceRepository, IPhotoService photoService) 
+        {
+			_raceRepository = raceRepository;
+            _photoService = photoService;
+        }
         public async Task<IActionResult> Index()
         {
             IEnumerable<Race> races = await _raceRepository.GetAll();
@@ -30,15 +32,34 @@ namespace MVC_ASP.NET.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Create(Race race)
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateRaceViewModel raceVM)
         {
-            if(!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(race);
-            }    
-            _raceRepository.Add(race);
-            return RedirectToAction("Index");
+                var result = await _photoService.AddPhotoAsync(raceVM.Image);
+
+                var race = new Race
+                {
+                    Title = raceVM.Title,
+                    Description = raceVM.Description,
+                    Image = result.Url.ToString(),
+                    Address = new Address
+                    {
+                        Street = raceVM.Address.Street,
+                        City = raceVM.Address.City,
+                        State = raceVM.Address.State,
+                    }
+                };
+                _raceRepository.Add(race);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Photo upload failed");
+            }
+
+            return View(raceVM);
         }
     }
-
 }

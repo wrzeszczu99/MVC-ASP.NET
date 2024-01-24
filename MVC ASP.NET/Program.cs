@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using MVC_ASP.NET.Data;
+using MVC_ASP.NET.Helpers;
 using MVC_ASP.NET.Interfaces;
 using MVC_ASP.NET.Repository;
+using MVC_ASP.NET.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IClubRepository, ClubRepository>();
 builder.Services.AddScoped<IRaceRepository, RaceRepository>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
