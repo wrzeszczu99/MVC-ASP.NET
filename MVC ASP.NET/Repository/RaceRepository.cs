@@ -34,6 +34,10 @@ namespace MVC_ASP.NET.Repository
 		public async Task<Race> GetByIdAsynch(int id)
 		{
 			return await _context.Races.Include(a => a.Address).FirstOrDefaultAsync(r => r.Id == id);
+		}	
+		public async Task<Race> GetByIdAsynchNoTracking(int id)
+		{
+			return await _context.Races.Include(a => a.Address).AsNoTracking().FirstOrDefaultAsync(r => r.Id == id);
 		}
 
 		public async Task<IEnumerable<Race>> GetRacesByCity(string city)

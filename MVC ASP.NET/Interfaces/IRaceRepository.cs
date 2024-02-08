@@ -6,6 +6,7 @@ namespace MVC_ASP.NET.Interfaces
 	{
 		Task<IEnumerable<Race>> GetAll();
 		Task<Race> GetByIdAsynch(int id);
+		Task<Race> GetByIdAsynchNoTracking(int id);
 		Task<IEnumerable<Race>> GetRacesByCity(string city);
 		bool Add(Race race);
 		bool Update(Race race);

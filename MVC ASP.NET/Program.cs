@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MVC_ASP.NET.Data;
 using MVC_ASP.NET.Helpers;
 using MVC_ASP.NET.Interfaces;
+using MVC_ASP.NET.Models;
 using MVC_ASP.NET.Repository;
 using MVC_ASP.NET.Services;
 
@@ -17,12 +20,18 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDBContext>();
+builder.Services.AddMemoryCache();
+builder.Services.AddSession();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
 
 var app = builder.Build();
 
 if(args.Length == 1 && args[0].ToLower() == "seeddata")
 {
-    Seed.SeedData(app);
+    //Seed.SeedData(app);
+    await Seed.SeedUsersAndRolesAsync(app);
 }
 
 // Configure the HTTP request pipeline.

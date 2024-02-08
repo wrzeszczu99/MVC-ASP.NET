@@ -6,6 +6,7 @@ namespace MVC_ASP.NET.Interfaces
 	{
 		Task<IEnumerable<Club>> GetAll();
 		Task<Club> GetByIdAsynch(int id);
+		Task<Club> GetByIdAsynchNoTracking(int id);
 		Task<IEnumerable<Club>> GetClubsByCity(string city);
 		bool Add(Club club);
 		bool Update (Club club);

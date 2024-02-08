@@ -35,6 +35,11 @@ namespace MVC_ASP.NET.Repository
 			return await _context.Clubs.Include(a => a.Address).FirstOrDefaultAsync(i => i.Id == id);
 		}
 
+		public async Task<Club> GetByIdAsynchNoTracking(int id)
+		{
+			return await _context.Clubs.Include(a => a.Address).AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);
+		}
+
 		public async Task<IEnumerable<Club>> GetClubsByCity(string city)
 		{
 			return await _context.Clubs.Where(c => c.Address.City.Contains(city)).ToListAsync();
