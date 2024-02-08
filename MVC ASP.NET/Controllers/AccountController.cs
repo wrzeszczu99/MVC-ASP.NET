@@ -48,5 +48,45 @@ namespace MVC_ASP.NET.Controllers
 
 
 		}
+
+
+        public IActionResult Register()
+        {
+            var response = new RegisterViewModel();
+            return View(response);
+        }
+
+		[HttpPost]
+		public async Task<IActionResult> Register(RegisterViewModel registerVM)
+		{
+			if(!ModelState.IsValid) return View(registerVM);
+
+			var isEmailUsed = await _userManager.FindByEmailAsync(registerVM.Email);
+			if (isEmailUsed != null)
+			{
+				TempData["Error"] = "This email is already used!";
+				return View(registerVM);
+			}
+
+			AppUser newUser = new AppUser
+			{
+				Email = registerVM.Email,
+				UserName = registerVM.Email
+			};
+
+			var newUserResponse = await _userManager.CreateAsync(newUser, registerVM.Password);
+
+			if (newUserResponse.Succeeded)
+				await _userManager.AddToRoleAsync(newUser, UserRoles.User);
+
+			return RedirectToAction("Index", "Race");
+        }
+
+		[HttpPost]
+		public async Task<IActionResult> Logout()
+		{
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Race");
+		}
 	}
 }
