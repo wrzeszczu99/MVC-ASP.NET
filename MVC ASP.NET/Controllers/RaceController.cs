@@ -10,11 +10,13 @@ namespace MVC_ASP.NET.Controllers
     {
 		private readonly IRaceRepository _raceRepository;
         private readonly IPhotoService _photoService;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public RaceController(IRaceRepository raceRepository, IPhotoService photoService) 
+        public RaceController(IRaceRepository raceRepository, IPhotoService photoService, IHttpContextAccessor contextAccessor)
         {
-			_raceRepository = raceRepository;
+            _raceRepository = raceRepository;
             _photoService = photoService;
+            _contextAccessor = contextAccessor;
         }
         public async Task<IActionResult> Index()
         {
@@ -30,7 +32,9 @@ namespace MVC_ASP.NET.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            var currentUserId = _contextAccessor.HttpContext.User.GetUserId();
+            var createVM = new CreateRaceViewModel { AppUserId = currentUserId };
+            return View(createVM);
         }
 
         [HttpPost]
@@ -45,6 +49,7 @@ namespace MVC_ASP.NET.Controllers
                     Title = raceVM.Title,
                     Description = raceVM.Description,
                     Image = result.Url.ToString(),
+                    AppUserId = raceVM.AppUserId,
                     Address = new Address
                     {
                         Street = raceVM.Address.Street,

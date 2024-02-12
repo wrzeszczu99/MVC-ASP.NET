@@ -9,11 +9,13 @@ namespace MVC_ASP.NET.Controllers
     {
 		private readonly IClubRepository _clubRepository;
         private readonly IPhotoService _photoService;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public ClubController(IClubRepository clubRepository, IPhotoService photoService)
+        public ClubController(IClubRepository clubRepository, IPhotoService photoService, IHttpContextAccessor contextAccessor)
         {
-			_clubRepository = clubRepository;
+            _clubRepository = clubRepository;
             _photoService = photoService;
+            _contextAccessor = contextAccessor;
         }
         public async Task<IActionResult> Index()
         {
@@ -29,7 +31,9 @@ namespace MVC_ASP.NET.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            var currentUserId = _contextAccessor.HttpContext.User.GetUserId();
+            var createVM = new CreateClubViewModel { AppUserId = currentUserId };
+            return View(createVM);
         }
 
         [HttpPost]
@@ -44,6 +48,7 @@ namespace MVC_ASP.NET.Controllers
                     Title = clubVM.Title,
                     Description = clubVM.Description,
                     Image = result.Url.ToString(),
+                    AppUserId = clubVM.AppUserId,
                     Address = new Address
                     {
                         Street = clubVM.Address.Street,
