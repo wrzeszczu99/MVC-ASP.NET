@@ -76,10 +76,15 @@ namespace MVC_ASP.NET.Controllers
 
 			var newUserResponse = await _userManager.CreateAsync(newUser, registerVM.Password);
 
-			if (newUserResponse.Succeeded)
-				await _userManager.AddToRoleAsync(newUser, UserRoles.User);
+            if (!newUserResponse.Succeeded)
+            {
+                TempData["Error"] = newUserResponse.ToString();
+                return View(registerVM);
+            }
+            
+			await _userManager.AddToRoleAsync(newUser, UserRoles.User);
 
-			return RedirectToAction("Index", "Race");
+            return RedirectToAction("Index", "Race");
         }
 
 		[HttpPost]
