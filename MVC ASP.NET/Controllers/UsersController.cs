@@ -25,7 +25,8 @@ namespace MVC_ASP.NET.Controllers
                     Id = user.Id,
                     UserName = user.UserName,
                     Pace = user.Pace,
-                    Mileage = user.Mileage
+                    Mileage = user.Mileage,
+                    ProfileImageUrl = user.ProfileImageUrl
                 };
                 result.Add(userViewModel);
             }

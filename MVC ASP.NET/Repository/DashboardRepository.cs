@@ -1,4 +1,5 @@
-﻿using MVC_ASP.NET.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using MVC_ASP.NET.Data;
 using MVC_ASP.NET.Interfaces;
 using MVC_ASP.NET.Models;
 
@@ -27,5 +28,27 @@ namespace MVC_ASP.NET.Repository
             var userRaces = _context.Races.Where(r => r.AppUser.Id == currentUser);
             return userRaces.ToList();
         }
+
+
+        public async Task<AppUser> GetUserById(string id)
+        {
+            return await _context.Users.FindAsync(id);
+        }
+        public async Task<AppUser> GetUserByIdNoTracking(string id)
+        {
+            return await _context.Users.Where(u => u.Id == id).AsNoTracking().FirstOrDefaultAsync();
+        }
+        public bool Update(AppUser user)
+        {
+            _context.Users.Update(user);
+            return Save();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
+        }
+
     }
 }
